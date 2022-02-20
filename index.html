@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To do list - Vue.js</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://kit.fontawesome.com/553865b2fe.js" crossorigin="anonymous"></script>
+    <style>
+        .doneTask {
+            text-decoration: line-through;
+        }
+
+        .container {
+            max-width: 500px;
+        }
+        
+        i {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            template: `
+            <div class="container">
+                <h1>To do app</h1>
+                <hr>
+                <div class="form-todo form-group">
+                    <p>
+                        <input v-model="name" placeholder="Add your task" type="text" name="task" class="form-control" @keyup.enter="addTask" autofocus>
+                    </p>
+                    <button type="submit" class="btn btn-danger" @click="deleteAllTasks">Delete all tasks</button>
+                    <button type="submit" class="btn btn-success" @click="addTask">Add task</button>
+                    <hr>
+                </div>
+                <div class="list-group" v-for="(task, index) in tasks">
+                        <div class="list-group-item">
+                            <label :for="index">
+                                <input type="checkbox" name="tasks" :id="index" v-model="task.done" true-value="true">
+                                <span :class="{ doneTask : task.done }">{{ task.name }}</span>
+                                <i class="fa-solid fa-trash-can" style="color:#ff0000" @click="deleteTask(index)"></i>
+
+                            </label>
+                        </div>
+                </div>
+            </div>
+            `,
+            data() {
+                return {
+                    tasks: [
+                        {
+                            name: 'Clean my room',
+                            done: false
+                        },
+                        {
+                            name: 'Do english homework',
+                            done: false
+                        },
+                        {
+                            name: 'Make a cake',
+                            done: false
+                        }
+                    ],
+                    name: '',
+                    done: false
+                }
+            },
+            methods: {
+                addTask() {
+                    if(this.name.trim() === '') {
+                        return
+                    }
+
+                    let i = 0
+                    for (const task of this.tasks) {
+                        if (this.tasks[i].name.toLowerCase() == this.name.toLowerCase().trim()) {
+                            alert('This task already exists! Delete and try again.')
+                            return
+                        }
+                            i++
+                    }
+
+                    this.tasks.push({
+                        name: this.name.trim(),
+                        done: this.done
+                    })
+                    this.name = ''
+                    saveCookies("tasks",this.tasks)
+                },
+                deleteTask(index) {
+                    this.tasks.splice(index, 1)
+                },
+                deleteAllTasks() {
+                    this.tasks.splice(0, this.tasks.length)
+                }
+            }
+        })
+    </script>
+</body>
+</html>
